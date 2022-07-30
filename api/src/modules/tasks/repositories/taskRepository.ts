@@ -1,16 +1,21 @@
 import { Task } from "../models/Task";
+import { ICreateTaskDTO, ITaskRepository } from "./ITaskRepository";
 
-interface ICreateTaskDTO {
-    title: string;
-    description: string;
-    deadline: Date;
-}
-
-class TaskRepository {
+class TaskRepository implements ITaskRepository {
     private task: Task[];
+
+    private static INSTANCE: TaskRepository;
 
     constructor() {
         this.task = [];
+    }
+
+    public static getInstance(): TaskRepository {
+        if (!TaskRepository.INSTANCE) {
+            TaskRepository.INSTANCE = new TaskRepository();
+        }
+
+        return TaskRepository.INSTANCE;
     }
 
     create({ title, description, deadline }: ICreateTaskDTO): void {

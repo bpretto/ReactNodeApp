@@ -1,4 +1,4 @@
-import { TaskRepository } from "../repositories/taskRepository";
+import { ITaskRepository } from "../../repositories/ITaskRepository";
 
 interface IRequest {
     title: string;
@@ -6,12 +6,12 @@ interface IRequest {
     deadline: Date;
 }
 
-class CreateTaskService {
-    constructor(private taskRepository: TaskRepository) { }
+class CreateTaskUseCase {
+    constructor(private taskRepository: ITaskRepository) {}
 
     execute({ title, description, deadline }: IRequest): void {
         this.taskRepository.create({ title, description, deadline });
     }
 }
 
-export { CreateTaskService };
+export { CreateTaskUseCase };
