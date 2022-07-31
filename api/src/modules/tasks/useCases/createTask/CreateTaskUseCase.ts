@@ -1,3 +1,5 @@
+import { inject, injectable } from "tsyringe";
+
 import { ITaskRepository } from "../../repositories/ITaskRepository";
 
 interface IRequest {
@@ -6,8 +8,12 @@ interface IRequest {
     deadline: Date;
 }
 
+@injectable()
 class CreateTaskUseCase {
-    constructor(private taskRepository: ITaskRepository) {}
+    constructor(
+        @inject("TaskRepository")
+        private taskRepository: ITaskRepository
+    ) {}
 
     execute({ title, description, deadline }: IRequest): void {
         this.taskRepository.create({ title, description, deadline });
