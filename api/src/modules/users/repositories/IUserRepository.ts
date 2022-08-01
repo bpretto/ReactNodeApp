@@ -13,8 +13,9 @@ interface ILoginDTO {
 
 interface IUserRepository {
     findByEmail(email: string): Promise<User>;
+    findById(id: string): Promise<User>;
     create({ name, email, password }: ICreateUserDTO): Promise<void>;
     login({ email, password }: ILoginDTO): Promise<User>;
 }
 
-export { IUserRepository, ICreateUserDTO, IFindByEmailDTO, ILoginDTO };
+export { IUserRepository, ICreateUserDTO, ILoginDTO };

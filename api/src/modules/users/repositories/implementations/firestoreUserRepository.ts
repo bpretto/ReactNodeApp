@@ -15,24 +15,39 @@ class FirestoreUserRepository implements IUserRepository {
         return FirestoreUserRepository.INSTANCE;
     }
 
+    async findById(id: string): Promise<User> {
+        const user = await db.collection("users").doc(id).get();
+        return user.data() as User;
+    }
+
     async findByEmail(email: string): Promise<User> {
-        const search = await db
+        // const user = await db.collection("users").doc(email).get();
+        // return user.data() as User;
+        const userFound = await db
             .collection("users")
             .where("email", "==", email)
             .get();
-        console.log(search.docs[0].data() as User);
-        const user = search.docs[0].data() as User;
 
+        if (userFound.empty) {
+            console.log("No matching documents.");
+            return;
+        }
+
+        const user = userFound.docs[0].data() as User;
+        // eslint-disable-next-line consistent-return
         return user;
     }
 
     async create({ name, email, password }: ICreateUserDTO): Promise<void> {
-        const user: User = { id: uuid(), name, email, password };
-
-        await db.collection("users").doc(email).set(user);
+        const id = uuid();
+        const user: User = { id, name, email, password };
+        await db.collection("users").doc(id).set(user);
     }
 
-    login({ email, password }: ILoginDTO): Promise<User> {}
+    login({ email, password }: ILoginDTO): Promise<User> {
+        console.log(email, password);
+        throw new Error("Method not implemented.");
+    }
 }
 
 export { FirestoreUserRepository };

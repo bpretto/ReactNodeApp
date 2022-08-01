@@ -2,6 +2,7 @@ import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
+import { AppError } from "../../../../errors/AppError";
 import { IUserRepository } from "../../repositories/IUserRepository";
 
 interface IRequest {
@@ -10,10 +11,11 @@ interface IRequest {
 }
 
 interface IResponse {
-    user: {
-        name: string;
-        email: string;
-    };
+    //     user: {
+    //         name: string;
+    //         email: string;
+    //         id: string;
+    //     };
     token: string;
 }
 
@@ -25,23 +27,22 @@ class AuthenticateUserUseCase {
     ) {}
 
     async execute({ email, password }: IRequest): Promise<IResponse> {
-        console.log("chego boyu");
-        const user = await this.userRepository.findByEmail({ email });
-
+        const user = await this.userRepository.findByEmail(email);
+        console.log(user);
         if (!user) {
-            console.log("tem esse user nao boy");
-            throw new Error("Wrong credentials"); // tratar erro
+            throw new AppError("Wrong credentials", 401); // tratar erro
         }
 
         const passwordMatch = await compare(password, user.password);
 
         if (!passwordMatch) {
-            throw new Error("Wrong credentials"); // tratar erro
+            throw new AppError("Wrong credentials", 401); // tratar erro
         }
 
         const token = sign(
             {
                 name: user.name,
+                email: user.email,
             },
             "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4",
             {
@@ -50,10 +51,7 @@ class AuthenticateUserUseCase {
             }
         );
 
-        return {
-            user,
-            token,
-        };
+        return { token };
     }
 }
 
