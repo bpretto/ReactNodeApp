@@ -4,20 +4,24 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn src/shared/http/server.ts"
+    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn src/shared/http/server.ts setenv GOOGLE_APPLICATION_CREDENTIALS='/home/bernardo/Área de Trabalho/Work time/Projetos/ReactNodeApp/api/serviceAccountKey.json'"
   },
   "dependencies": {
     "@types/uuid": "^8.3.4",
+    "bcrypt": "^5.0.1",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "firebase": "^9.9.1",
     "firebase-admin": "^11.0.1",
+    "jsonwebtoken": "^8.5.1",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.7.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/typescript": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",

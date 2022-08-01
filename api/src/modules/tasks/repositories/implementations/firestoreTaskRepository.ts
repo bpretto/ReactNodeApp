@@ -1,3 +1,4 @@
+// import { addDoc, collection, doc, getDocs } from "firebase/firestore";
 import { v4 as uuid } from "uuid";
 
 import { db } from "../../../../firestore/firestore";
@@ -20,15 +21,6 @@ class FirestoreTaskRepository implements ITaskRepository {
         description,
         deadline,
     }: ICreateTaskDTO): Promise<void> {
-        // const task = new Task();
-        // Object.assign(task, {
-        //     title,
-        //     description,
-        //     deadline,
-        //     completed: false,
-        //     createdAt: new Date(),
-        // });
-
         const task: Task = {
             id: uuid(),
             title,
@@ -38,14 +30,36 @@ class FirestoreTaskRepository implements ITaskRepository {
             createdAt: new Date(),
         };
 
-        console.log(task);
+        await db
+            .collection("users")
+            .doc("bpretto")
+            .collection("tasks")
+            .doc(task.id)
+            .set(task);
 
-        const docRef = db.collection("bpretto").doc(task.id);
-        await docRef.set(task);
+        // try {
+        //     const docRef = await addDoc(collection(db, "tasks"), task);
+        //     console.log("Document written with ID: ", docRef.id);
+        // } catch (e) {
+        //     console.error("Error adding document: ", e);
+        // }
     }
 
-    list(): Task[] {
-        throw new Error("Method not implemented.");
+    async list(): Promise<Task[]> {
+        const tasks = await db
+            .collection("users")
+            .doc("bpretto")
+            .collection("tasks")
+            .get();
+        const tasksArray = [];
+        tasks.forEach((doc) => {
+            tasksArray.push(doc.data() as Task);
+        });
+        // const querySnapshot = await getDocs(collection(db, "bpretto"));
+        // querySnapshot.forEach((doc) => {
+        //     console.log(`${doc.id} => ${doc.data()}`);
+        // });
+        return tasksArray;
     }
 }
 

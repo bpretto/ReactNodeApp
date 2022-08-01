@@ -7,8 +7,8 @@ interface ICreateTaskDTO {
 }
 
 interface ITaskRepository {
-    list(): Task[];
-    create({ title, description, deadline }: ICreateTaskDTO): void;
+    list(): Promise<Task[]>;
+    create({ title, description, deadline }: ICreateTaskDTO): Promise<void>;
 }
 
 export { ITaskRepository, ICreateTaskDTO };

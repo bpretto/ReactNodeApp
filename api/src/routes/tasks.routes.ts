@@ -1,17 +1,16 @@
 import { Router } from "express";
 
 import { CreateTaskController } from "../modules/tasks/useCases/createTask/CreateTaskController";
-// import { ListTaskController } from "../modules/tasks/useCases/listTasks";
+import { ListTasksController } from "../modules/tasks/useCases/listTasks/ListTasksController";
 
 const tasksRoutes = Router();
 
 const createTaskController = new CreateTaskController();
+const listTaskController = new ListTasksController();
 
 tasksRoutes.post("/create", createTaskController.handle);
 
-// tasksRoutes.get("/", async (req, res) => {
-//     return listTaskController.handle(req, res);
-// });
+tasksRoutes.get("/", listTaskController.handle);
 
 // tasksRoutes.get("/list", async (req, res) => {
 //     const tasks = await db.collection(username).get();

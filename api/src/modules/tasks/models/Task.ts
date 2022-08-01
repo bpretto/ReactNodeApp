@@ -1,7 +1,7 @@
 // import { v4 as uuid } from "uuid";
 
 class Task {
-    id?: string;
+    id: string;
     title: string;
     description: string;
     completed: boolean;

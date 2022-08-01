@@ -10,9 +10,8 @@ class ListTasksUseCase {
         private taskRepository: ITaskRepository
     ) {}
 
-    execute(): Task[] {
+    execute(): Promise<Task[]> {
         const tasks = this.taskRepository.list();
-
         return tasks;
     }
 }
