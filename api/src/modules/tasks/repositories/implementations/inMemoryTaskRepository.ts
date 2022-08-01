@@ -18,20 +18,23 @@ class InMemoryTaskRepository implements ITaskRepository {
         return InMemoryTaskRepository.INSTANCE;
     }
 
-    create({ title, description, deadline }: ICreateTaskDTO): void {
+    async create({
+        title,
+        description,
+        deadline,
+    }: ICreateTaskDTO): Promise<void> {
         const task = new Task();
         Object.assign(task, {
             title,
             description,
             deadline,
-            completed: false,
             createdAt: new Date(),
         });
 
         this.task.push(task);
     }
 
-    list(): Task[] {
+    async list(): Promise<Task[]> {
         return this.task;
     }
 }

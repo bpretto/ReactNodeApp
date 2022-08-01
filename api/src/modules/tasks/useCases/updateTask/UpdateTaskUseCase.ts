@@ -5,6 +5,7 @@ import { IUserRepository } from "../../../users/repositories/IUserRepository";
 import { ITaskRepository } from "../../repositories/ITaskRepository";
 
 interface IRequest {
+    id: string;
     token: string;
     title: string;
     description: string;
@@ -16,7 +17,7 @@ interface IPayload {
 }
 
 @injectable()
-class CreateTaskUseCase {
+class UpdateTaskUseCase {
     constructor(
         @inject("TaskRepository")
         private taskRepository: ITaskRepository,
@@ -25,6 +26,7 @@ class CreateTaskUseCase {
     ) {}
 
     async execute({
+        id,
         token,
         title,
         description,
@@ -35,13 +37,16 @@ class CreateTaskUseCase {
             payload,
             "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4"
         ) as IPayload;
-        await this.taskRepository.create({
+        await this.taskRepository.update({
             user_id,
-            title,
-            description,
-            deadline,
+            task: {
+                id,
+                title,
+                description,
+                deadline,
+            },
         });
     }
 }
 
-export { CreateTaskUseCase };
+export { UpdateTaskUseCase };

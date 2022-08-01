@@ -3,7 +3,11 @@ import { v4 as uuid } from "uuid";
 
 import { db } from "../../../../firestore/firestore";
 import { Task } from "../../models/Task";
-import { ICreateTaskDTO, ITaskRepository } from "../ITaskRepository";
+import {
+    ICreateTaskDTO,
+    ITaskRepository,
+    IUpdateTaskDTO,
+} from "../ITaskRepository";
 
 class FirestoreTaskRepository implements ITaskRepository {
     private static INSTANCE: FirestoreTaskRepository;
@@ -17,6 +21,7 @@ class FirestoreTaskRepository implements ITaskRepository {
     }
 
     async create({
+        user_id,
         title,
         description,
         deadline,
@@ -26,40 +31,40 @@ class FirestoreTaskRepository implements ITaskRepository {
             title,
             description,
             deadline,
-            completed: false,
             createdAt: new Date(),
         };
 
         await db
             .collection("users")
-            .doc("bpretto")
+            .doc(user_id)
             .collection("tasks")
             .doc(task.id)
             .set(task);
-
-        // try {
-        //     const docRef = await addDoc(collection(db, "tasks"), task);
-        //     console.log("Document written with ID: ", docRef.id);
-        // } catch (e) {
-        //     console.error("Error adding document: ", e);
-        // }
     }
 
-    async list(): Promise<Task[]> {
+    async list(user_id: string): Promise<Task[]> {
         const tasks = await db
             .collection("users")
-            .doc("bpretto")
+            .doc(user_id)
             .collection("tasks")
             .get();
         const tasksArray = [];
         tasks.forEach((doc) => {
             tasksArray.push(doc.data() as Task);
         });
-        // const querySnapshot = await getDocs(collection(db, "bpretto"));
-        // querySnapshot.forEach((doc) => {
-        //     console.log(`${doc.id} => ${doc.data()}`);
-        // });
         return tasksArray;
+    }
+
+    async update({ user_id, task }: IUpdateTaskDTO): Promise<void> {
+        db.collection("users")
+            .doc(user_id)
+            .collection("tasks")
+            .doc(task.id)
+            .update({
+                title: task.title,
+                description: task.description,
+                deadline: task.deadline,
+            });
     }
 }
 

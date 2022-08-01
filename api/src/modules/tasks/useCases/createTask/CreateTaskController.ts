@@ -9,7 +9,6 @@ class CreateTaskController {
         const { title, description, deadline } = req.body;
 
         const createTaskUseCase = container.resolve(CreateTaskUseCase);
-
         await createTaskUseCase.execute({
             token,
             title,

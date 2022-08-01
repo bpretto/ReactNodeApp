@@ -5,9 +5,10 @@ import { ListTasksUseCase } from "./ListTasksUseCase";
 
 class ListTasksController {
     async handle(req: Request, res: Response): Promise<Response> {
+        const token = req.headers.authorization;
         const listTasksUseCase = container.resolve(ListTasksUseCase);
 
-        const tasks = await listTasksUseCase.execute();
+        const tasks = await listTasksUseCase.execute(token);
 
         return res.json(tasks);
     }

@@ -4,8 +4,6 @@ class Task {
     id: string;
     title: string;
     description: string;
-    completed: boolean;
-    completedAt?: Date;
     deadline: Date;
     createdAt: Date;
 

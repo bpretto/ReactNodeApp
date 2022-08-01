@@ -2,7 +2,7 @@ import { v4 as uuid } from "uuid";
 
 import { db } from "../../../../firestore/firestore";
 import { User } from "../../models/User";
-import { ICreateUserDTO, ILoginDTO, IUserRepository } from "../IUserRepository";
+import { ICreateUserDTO, IUserRepository } from "../IUserRepository";
 
 class FirestoreUserRepository implements IUserRepository {
     private static INSTANCE: FirestoreUserRepository;
@@ -44,10 +44,10 @@ class FirestoreUserRepository implements IUserRepository {
         await db.collection("users").doc(id).set(user);
     }
 
-    login({ email, password }: ILoginDTO): Promise<User> {
-        console.log(email, password);
-        throw new Error("Method not implemented.");
-    }
+    // login({ email, password }: ILoginDTO): Promise<User> {
+    //     console.log(email, password);
+    //     throw new Error("Method not implemented.");
+    // }
 }
 
 export { FirestoreUserRepository };

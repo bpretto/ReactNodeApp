@@ -6,16 +6,16 @@ interface ICreateUserDTO {
     password: string;
 }
 
-interface ILoginDTO {
-    email: string;
-    password: string;
-}
+// interface ILoginDTO {
+//     email: string;
+//     password: string;
+// }
 
 interface IUserRepository {
     findByEmail(email: string): Promise<User>;
     findById(id: string): Promise<User>;
     create({ name, email, password }: ICreateUserDTO): Promise<void>;
-    login({ email, password }: ILoginDTO): Promise<User>;
+    // login({ email, password }: ILoginDTO): Promise<User>;
 }
 
-export { IUserRepository, ICreateUserDTO, ILoginDTO };
+export { IUserRepository, ICreateUserDTO };
