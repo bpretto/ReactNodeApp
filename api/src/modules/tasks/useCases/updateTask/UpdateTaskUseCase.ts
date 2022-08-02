@@ -1,6 +1,7 @@
 import { verify } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
+import auth from "../../../../config/auth";
 import { IUserRepository } from "../../../users/repositories/IUserRepository";
 import { ITaskRepository } from "../../repositories/ITaskRepository";
 
@@ -33,10 +34,7 @@ class UpdateTaskUseCase {
         deadline,
     }: IRequest): Promise<void> {
         const [, payload] = token.split(" ");
-        const { sub: user_id } = verify(
-            payload,
-            "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4"
-        ) as IPayload;
+        const { sub: user_id } = verify(payload, auth.secret_token) as IPayload;
         await this.taskRepository.update({
             user_id,
             task: {

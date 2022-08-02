@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 
+import auth from "../config/auth";
 import { AppError } from "../errors/AppError";
 import { FirestoreUserRepository } from "../modules/users/repositories/implementations/firestoreUserRepository";
 
@@ -24,7 +25,7 @@ export async function ensureAuthenticated(
     try {
         const { sub: user_id } = verify(
             token,
-            "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4"
+            auth.expires_in_token
         ) as IPayload;
 
         const userRepository = new FirestoreUserRepository();

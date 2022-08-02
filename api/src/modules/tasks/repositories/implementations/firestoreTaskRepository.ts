@@ -1,5 +1,4 @@
 // import { addDoc, collection, doc, getDocs } from "firebase/firestore";
-import { v4 as uuid } from "uuid";
 
 import { db } from "../../../../firestore/firestore";
 import { Task } from "../../models/Task";
@@ -20,20 +19,7 @@ class FirestoreTaskRepository implements ITaskRepository {
         return FirestoreTaskRepository.INSTANCE;
     }
 
-    async create({
-        user_id,
-        title,
-        description,
-        deadline,
-    }: ICreateTaskDTO): Promise<void> {
-        const task: Task = {
-            id: uuid(),
-            title,
-            description,
-            deadline,
-            createdAt: new Date(),
-        };
-
+    async create({ user_id, task }: ICreateTaskDTO): Promise<void> {
         await db
             .collection("users")
             .doc(user_id)
@@ -56,7 +42,8 @@ class FirestoreTaskRepository implements ITaskRepository {
     }
 
     async update({ user_id, task }: IUpdateTaskDTO): Promise<void> {
-        db.collection("users")
+        await db
+            .collection("users")
             .doc(user_id)
             .collection("tasks")
             .doc(task.id)
@@ -65,6 +52,18 @@ class FirestoreTaskRepository implements ITaskRepository {
                 description: task.description,
                 deadline: task.deadline,
             });
+    }
+
+    async delete(user_id: string, id: string): Promise<void> {
+        console.log(id);
+        const test = await db
+            .collection("users")
+            .doc(user_id)
+            .collection("tasks")
+            .doc(id)
+            .delete();
+
+        console.log(test);
     }
 }
 

@@ -2,6 +2,7 @@ import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
+import auth from "../../../../config/auth";
 import { AppError } from "../../../../errors/AppError";
 import { IUserRepository } from "../../repositories/IUserRepository";
 
@@ -43,10 +44,10 @@ class AuthenticateUserUseCase {
                 name: user.name,
                 email: user.email,
             },
-            "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4",
+            auth.secret_token,
             {
                 subject: user.id,
-                expiresIn: "1d",
+                expiresIn: auth.expires_in_token,
             }
         );
 

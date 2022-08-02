@@ -2,9 +2,13 @@ import { Task } from "../models/Task";
 
 interface ICreateTaskDTO {
     user_id: string;
-    title: string;
-    description: string;
-    deadline: Date;
+    task: {
+        id: string;
+        title: string;
+        description: string;
+        deadline: Date;
+        createdAt: Date;
+    };
 }
 
 interface IUpdateTaskDTO {
@@ -20,19 +24,11 @@ interface IUpdateTaskDTO {
 interface ITaskRepository {
     list(user_id): Promise<Task[]>;
 
-    create({
-        user_id,
-        title,
-        description,
-        deadline,
-    }: ICreateTaskDTO): Promise<void>;
+    create({ user_id, task }: ICreateTaskDTO): Promise<void>;
 
-    update({
-        user_id,
-        title,
-        description,
-        deadline,
-    }: IUpdateTaskDTO): Promise<void>;
+    update({ user_id, task }: IUpdateTaskDTO): Promise<void>;
+
+    delete(user_id: string, id: string): Promise<void>;
 }
 
 export { ITaskRepository, ICreateTaskDTO, IUpdateTaskDTO };
