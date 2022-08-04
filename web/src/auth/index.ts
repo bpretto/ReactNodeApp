@@ -38,33 +38,3 @@ class Auth {
 }
 
 export default new Auth();
-
-// import { useState } from "react";
-// import { User } from "../interfaces";
-// import { createSession } from "../services/UserService";
-
-// function Auth() {
-//     const [authenticated, setAuthenticated] = useState(false);
-    
-//     async function login({email, password}: User) {
-//         try {
-//             const session = await createSession({email, password});
-//             localStorage.setItem("token", session.data.token);
-//             setAuthenticated(true);
-//         } catch (error) {
-//             setAuthenticated(false);
-//             console.log(error);
-//         }
-//     }
-
-//     function logout() {
-//         localStorage.clear();
-//         setAuthenticated(false);
-//     }
-
-//     function isAuthenticated() {
-//         return authenticated;
-//     }
-// }
-
-// export default Auth;

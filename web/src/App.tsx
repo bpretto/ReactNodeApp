@@ -1,4 +1,4 @@
-import { AllRoutes } from "./routes/index.routes";
+import { AllRoutes } from "./routes";
 import { GlobalStyles } from "./themes/styles";
 import { Theme } from "./themes/themes";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -25,13 +25,3 @@ export function App() {
     </ThemeProvider>
   );
 }
-
-
-// export const App= () => {
-//   return (
-    // <Theme>
-    //     <GlobalStyles />
-    //     <AppRoutes />
-    // </Theme>
-//   );
-// }

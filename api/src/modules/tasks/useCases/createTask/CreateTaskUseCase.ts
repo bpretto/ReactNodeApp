@@ -34,7 +34,6 @@ class CreateTaskUseCase {
     }: IRequest): Promise<void> {
         const [, payload] = token.split(" ");
         const { sub: user_id } = verify(payload, auth.secret_token) as IPayload;
-        console.log(user_id);
         await this.taskRepository.create({
             user_id,
             task: {

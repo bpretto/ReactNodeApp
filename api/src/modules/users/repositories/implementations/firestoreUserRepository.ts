@@ -21,15 +21,12 @@ class FirestoreUserRepository implements IUserRepository {
     }
 
     async findByEmail(email: string): Promise<User> {
-        // const user = await db.collection("users").doc(email).get();
-        // return user.data() as User;
         const userFound = await db
             .collection("users")
             .where("email", "==", email)
             .get();
 
         if (userFound.empty) {
-            console.log("No matching documents.");
             return;
         }
 
@@ -43,11 +40,6 @@ class FirestoreUserRepository implements IUserRepository {
         const user: User = { id, name, email, password };
         await db.collection("users").doc(id).set(user);
     }
-
-    // login({ email, password }: ILoginDTO): Promise<User> {
-    //     console.log(email, password);
-    //     throw new Error("Method not implemented.");
-    // }
 }
 
 export { FirestoreUserRepository };

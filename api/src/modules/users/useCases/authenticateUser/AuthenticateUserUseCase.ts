@@ -12,11 +12,6 @@ interface IRequest {
 }
 
 interface IResponse {
-    //     user: {
-    //         name: string;
-    //         email: string;
-    //         id: string;
-    //     };
     token: string;
 }
 
@@ -30,13 +25,13 @@ class AuthenticateUserUseCase {
     async execute({ email, password }: IRequest): Promise<IResponse> {
         const user = await this.userRepository.findByEmail(email);
         if (!user) {
-            throw new AppError("Wrong credentials", 401); // tratar erro
+            throw new AppError("Wrong credentials", 401);
         }
 
         const passwordMatch = await compare(password, user.password);
 
         if (!passwordMatch) {
-            throw new AppError("Wrong credentials", 401); // tratar erro
+            throw new AppError("Wrong credentials", 401);
         }
 
         const token = sign(

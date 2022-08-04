@@ -1,5 +1,3 @@
-// import { addDoc, collection, doc, getDocs } from "firebase/firestore";
-
 import { db } from "../../../../firestore/firestore";
 import { Task } from "../../models/Task";
 import {
@@ -33,6 +31,7 @@ class FirestoreTaskRepository implements ITaskRepository {
             .collection("users")
             .doc(user_id)
             .collection("tasks")
+            .orderBy("createdAt", "desc")
             .get();
         const tasksArray = [];
         tasks.forEach((doc) => {
@@ -55,15 +54,12 @@ class FirestoreTaskRepository implements ITaskRepository {
     }
 
     async delete(user_id: string, id: string): Promise<void> {
-        console.log(id);
-        const test = await db
+        await db
             .collection("users")
             .doc(user_id)
             .collection("tasks")
             .doc(id)
             .delete();
-
-        console.log(test);
     }
 }
 

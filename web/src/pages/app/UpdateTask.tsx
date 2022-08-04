@@ -1,15 +1,20 @@
 import { Alert, Button, IconButton, Snackbar, TextField } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Logo from "../../images/logo.png";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { SyntheticEvent, useState } from "react";
-import auth from "../../auth";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useTask } from "../../hooks/useTask";
+import { ITask } from "../../interfaces";
 
-export const Signup= () => {
-
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+export const UpdateTask= () => {
+    const { state } = useLocation();
+    const { task } = state as { task: ITask };
+    const { updateTask } = useTask();
+    const [title, setTitle] = useState(task.title);
+    const [description, setDescription] = useState(task.description);
+    const [deadline, setDeadline] = useState<Date | null>(task.deadline);
     const [alert, setAlert] = useState({
         open: false,
         message: "",
@@ -21,14 +26,18 @@ export const Signup= () => {
         navigate(-1);
     };
 
-    async function handleSubmit() {
+    const handleClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+          return;
+        }  
+        setAlert({ ...alert, open: false });
+      };
+
+    const handleSubmit = () => {
         if (
-            name.length === 0
-            || email.length === 0
-            || password.length === 0
-            || !email.includes("@")
-            || !email.includes(".")
-            || password.length < 6
+            title.length === 0
+            || description.length === 0
+            || deadline === null
         ) {
             setAlert({
                 open: true,
@@ -38,13 +47,15 @@ export const Signup= () => {
             return;
         }
 
-        const user ={
-            name,
-            email,
-            password
-        }
         try {
-            await auth.signup(user);
+            const updatedTask = {
+                ...task,
+                title,
+                description,
+                deadline,
+            };
+            updateTask(updatedTask);
+            navigate("/all-tasks");
         }
         catch(err: any) {
             setAlert({
@@ -54,14 +65,6 @@ export const Signup= () => {
             });
             return;
         }
-        navigate("/all-tasks");
-    };
-  
-    const handleClose = (event?: SyntheticEvent | Event, reason?: string) => {
-      if (reason === 'clickaway') {
-        return;
-      }  
-      setAlert({ ...alert, open: false });
     };
 
     return (
@@ -76,38 +79,41 @@ export const Signup= () => {
                         type="text"
                         color="secondary"
                         fullWidth
-                        style={styles.textField}
-                        label="Nome"
-                        variant="filled"
                         required
-                        value={name}
-                        onChange={name => setName(name.target.value)}
+                        style={styles.textField}
+                        label="Título"
+                        variant="filled"
+                        value={title}
+                        onChange={title => setTitle(title.target.value)}
                     />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateTimePicker
+                            renderInput={(props) => <TextField required fullWidth variant="filled" color="secondary" {...props} />}
+                            label="Concluir até..."
+                            inputFormat="DD/MM/YYYY HH:mm"
+                            value={deadline}
+                            onChange={(deadline) => {
+                                setDeadline(deadline);
+                            }}
+                        />
+                    </LocalizationProvider>
                     <TextField
-                        type="email"
+                        required
+                        type="text"
                         color="secondary"
                         fullWidth
                         style={styles.textField}
-                        label="E-mail"
+                        label="Descrição"
                         variant="filled"
-                        required
-                        value={email}
-                        onChange={email => setEmail(email.target.value)}
-                    />
-                    <TextField
-                        type="password"
-                        color="secondary"
-                        fullWidth
-                        style={styles.textField}
-                        label="Senha (mínimo 6 caracteres)"
-                        variant="filled"
-                        required
-                        value={password}
-                        onChange={password => setPassword(password.target.value)}
+                        multiline
+                        rows={4}
+                        inputProps={{ maxLength: 400 }}
+                        value={description}
+                        onChange={description => setDescription(description.target.value)}
                     />
                 </div>
                 <Button onClick={handleSubmit} variant="contained" size="large" style={styles.button}>
-                    Cadastrar
+                    Criar
                 </Button>
                 <Snackbar  open={alert.open} autoHideDuration={6000} onClose={handleClose}>
                     <Alert onClose={handleClose} variant="filled" severity={alert.severity} sx={{ width: '100%' }}>

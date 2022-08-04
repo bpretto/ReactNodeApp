@@ -5,6 +5,7 @@ import auth from "../../auth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useTask } from "../../hooks/useTask";
+import { ITask } from "../../interfaces";
 
 
 export const AllTasks = () => {
@@ -14,6 +15,10 @@ export const AllTasks = () => {
     const logout = () => {
         auth.logout();
         navigate("/")
+    }
+
+    const navigateToUpdateTask = (task: ITask) => {
+        navigate("/update-task", { state: { task } })
     }
 
     const navigateToCreateTask = () => {
@@ -48,7 +53,7 @@ export const AllTasks = () => {
                                         {task.title}
                                     </Typography>
                                     <div>
-                                        <IconButton >
+                                        <IconButton onClick={() => navigateToUpdateTask(task)} >
                                             <Edit />
                                         </IconButton>
                                         <IconButton onClick={() => deleteTask(task.id)}>
@@ -57,7 +62,7 @@ export const AllTasks = () => {
                                     </div>
                                 </div>
                                 <Typography variant="subtitle2" gutterBottom component="div">
-                                    Até {task.deadline}
+                                    Até {new Date(task.deadline).toLocaleString()}
                                 </Typography>
                                 <Typography variant="body1" gutterBottom>
                                     {task.description}

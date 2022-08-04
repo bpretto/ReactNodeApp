@@ -41,10 +41,8 @@ export const Login = () => {
         }
         try {
             await auth.login(user);
-            navigate("/all-tasks");
         }
         catch(err: any) {
-            console.log(err.response.status);
             setAlert({
                 open: true,
                 message: `Erro ao criar usuário! HTTP ERROR ${err.response.status} - ${err.response.data.message}`,
@@ -52,6 +50,8 @@ export const Login = () => {
             });
             return;
         }
+
+        navigate("/all-tasks");
     };
 
     const handleClose = (event?: SyntheticEvent | Event, reason?: string) => {

@@ -1,21 +1,69 @@
-import { Button, IconButton, TextField } from "@mui/material";
+import { Alert, Button, IconButton, Snackbar, TextField } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Logo from "../../images/logo.png";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useTask } from "../../hooks/useTask";
 
 export const CreateTask= () => {
+    const { createTask } = useTask();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [dateTime, setDateTime] = useState<Date | null>(
-        new Date('2014-08-18T21:11:54'),
+    const [deadline, setDeadline] = useState<Date | null>(
+        new Date(),
       );
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        severity: "info" as "info" | "success" | "warning" | "error"
+    });
     const navigate = useNavigate();
 
     const goBack = () => {
         navigate(-1);
+    };
+
+    const handleClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+          return;
+        }  
+        setAlert({ ...alert, open: false });
+      };
+
+    const handleSubmit = () => {
+        if (
+            title.length === 0
+            || description.length === 0
+            || deadline === null
+        ) {
+            setAlert({
+                open: true,
+                message: "Preencha corretamente todos os campos!",
+                severity: "error",
+            });
+            return;
+        }
+
+        const task = {
+            title,
+            description,
+            deadline
+        };
+
+        try {
+            createTask(task);
+            navigate("/all-tasks");
+        }
+        catch(err: any) {
+            setAlert({
+                open: true,
+                message: `Erro ao criar usuário! HTTP ERROR ${err.response.status} - ${err.response.data.message}`,
+                severity: "error"
+            });
+            return;
+        }
     };
 
     return (
@@ -30,6 +78,7 @@ export const CreateTask= () => {
                         type="text"
                         color="secondary"
                         fullWidth
+                        required
                         style={styles.textField}
                         label="Título"
                         variant="filled"
@@ -38,15 +87,17 @@ export const CreateTask= () => {
                     />
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DateTimePicker
-                            renderInput={(props) => <TextField fullWidth variant="filled" color="secondary" {...props} />}
+                            renderInput={(props) => <TextField required fullWidth variant="filled" color="secondary" {...props} />}
                             label="Concluir até..."
-                            value={dateTime}
-                            onChange={(dateTime) => {
-                                setDateTime(dateTime);
+                            inputFormat="DD/MM/YYYY HH:mm"
+                            value={deadline}
+                            onChange={(deadline) => {
+                                setDeadline(deadline);
                             }}
                         />
                     </LocalizationProvider>
                     <TextField
+                        required
                         type="text"
                         color="secondary"
                         fullWidth
@@ -60,9 +111,14 @@ export const CreateTask= () => {
                         onChange={description => setDescription(description.target.value)}
                     />
                 </div>
-                    <Button variant="contained" size="large" style={styles.button}>
-                        Criar
-                    </Button>
+                <Button onClick={handleSubmit} variant="contained" size="large" style={styles.button}>
+                    Criar
+                </Button>
+                <Snackbar  open={alert.open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} variant="filled" severity={alert.severity} sx={{ width: '100%' }}>
+                        {alert.message}
+                    </Alert>
+                </Snackbar>
             </div>
         </div>
     )
