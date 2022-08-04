@@ -16,7 +16,7 @@ const listTaskController = new ListTasksController();
 tasksRoutes.use(ensureAuthenticated);
 tasksRoutes.post("/create", createTaskController.handle);
 tasksRoutes.put("/update", updateTaskController.handle);
-tasksRoutes.delete("/delete", deleteTaskController.handle);
+tasksRoutes.delete("/delete/:id", deleteTaskController.handle);
 
 tasksRoutes.get("/", listTaskController.handle);
 

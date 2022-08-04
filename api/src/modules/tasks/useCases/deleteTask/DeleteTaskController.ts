@@ -6,7 +6,7 @@ import { DeleteTaskUseCase } from "./DeleteTaskUseCase";
 class DeleteTaskController {
     async handle(req: Request, res: Response): Promise<Response> {
         const token = req.headers.authorization;
-        const { id } = req.body;
+        const { id } = req.params;
 
         const deleteTaskUseCase = container.resolve(DeleteTaskUseCase);
         await deleteTaskUseCase.execute({

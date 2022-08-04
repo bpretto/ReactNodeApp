@@ -1,22 +1,71 @@
-import { Button, IconButton, TextField } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Card, CardContent, IconButton, List, Typography } from "@mui/material";
 import Logo from "../../images/logo.png";
+import { Add, Delete, Edit, Logout } from "@mui/icons-material";
+import auth from "../../auth";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Add, HdrPlus, PlusOne } from "@mui/icons-material";
+import { useEffect } from "react";
+import { useTask } from "../../hooks/useTask";
+
 
 export const AllTasks = () => {
-    
+    const { tasks, getAllTasks, deleteTask } = useTask();
+    const navigate = useNavigate()
+
+    const logout = () => {
+        auth.logout();
+        navigate("/")
+    }
+
+    const navigateToCreateTask = () => {
+        navigate("/create-task")
+    }
+
+    useEffect(() => {
+        getAllTasks();
+    }, [getAllTasks]);
+
     return (
         <div style={styles.wrapper}>
+            <IconButton onClick={logout} style={styles.logoutButton}>
+                <Logout/>
+            </IconButton>
             <div style={styles.column}>
+                <List style={styles.list}>
                 <img src={Logo} style={styles.logo} alt="TaskApp" />
                 <div style={styles.buttonWrapper}>
-                    
-                    <IconButton style={styles.createButton}>
-                        <Add/>
+                    <Typography style={styles.heading} variant="h5" gutterBottom component="div">
+                        Minhas Tasks:
+                    </Typography>
+                    <IconButton onClick={navigateToCreateTask} style={styles.createButton}>
+                        <Add />
                     </IconButton>
                 </div>
+                    {tasks.map((task) => (
+                        <Card key={task.id} style={styles.card}>
+                            <CardContent>
+                                <div style={styles.cardHeader}>
+                                    <Typography variant="h5" gutterBottom component="div">
+                                        {task.title}
+                                    </Typography>
+                                    <div>
+                                        <IconButton >
+                                            <Edit />
+                                        </IconButton>
+                                        <IconButton onClick={() => deleteTask(task.id)}>
+                                            <Delete />
+                                        </IconButton>
+                                    </div>
+                                </div>
+                                <Typography variant="subtitle2" gutterBottom component="div">
+                                    Até {task.deadline}
+                                </Typography>
+                                <Typography variant="body1" gutterBottom>
+                                    {task.description}
+                                </Typography>
+                            </CardContent>
+                        </Card>      
+                    ))}
+                </List>
             </div>
         </div>
     )
@@ -27,36 +76,62 @@ const styles = {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        height: "100vh",
-        width: "100vw",
+        maxHeight: '100%',
+        overflow: 'auto'
     },
     column: {
         display: "flex",
         flexDirection: "column" as "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "100vh",
         width: "50vw",
+        marginTop: "2vh",
+        marginBottom: "2vh"
     },
-    logo: {
-        width: "50%",
+    logoutButton: {
+        marginRight: "20px",
+        marginTop: "20px",
+        position: "absolute" as "absolute",
+        top: "0",
+        right: "0",
+        zIndex: "1",
+        backgroundColor: "#fc0fc1"
     },
-    buttonWrapper: {
-        marginTop: "10px",
+    list: {
         display: "flex",
         flexDirection: "column" as "column",
         alignItems: "center",
-        justifyContent: "space-evenly",
+        justifyContent: "center",
         width: "25vw",
-        
+    },
+    logo: {
+        width: "25vw",
+    },
+    heading: {
+        fontWeight: "bold",
+        color: "#fff",
+    },
+    buttonWrapper: {
+        marginTop: "20px",
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "25vw",
     },
     createButton: {
         backgroundColor: "#fc0fc1"
     },
-    button: {
+    card: {
+        marginTop: "20px",
+        width: "100%",
         backgroundColor: "#fc0fc1",
-        color: "#fff",
-        width: "25vw",
-        margin: "10px",
+
+    },
+    cardHeader: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "top",
+        justifyContent: "space-between",
     },
 }

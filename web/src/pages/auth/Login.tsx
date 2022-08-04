@@ -1,18 +1,66 @@
-import { Button, IconButton, TextField } from "@mui/material";
+import { Alert, Button, IconButton, Snackbar, TextField } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Logo from "../../images/logo.png";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
+import auth from "../../auth";
 
 export const Login = () => {
-
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        severity: "info" as "info" | "success" | "warning" | "error"
+    });
     const navigate = useNavigate();
+
     const goBack = () => {
         navigate(-1);
     };
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    async function handleSubmit() {
+        if (
+            email.length === 0
+            || password.length === 0
+            || !email.includes("@")
+            || !email.includes(".")
+            || password.length < 6
+        ) {
+            setAlert({
+                open: true,
+                message: "Preencha corretamente todos os campos!",
+                severity: "error",
+            });
+            return;
+        }
+
+        const user ={
+            email,
+            password
+        }
+        try {
+            await auth.login(user);
+            navigate("/all-tasks");
+        }
+        catch(err: any) {
+            console.log(err.response.status);
+            setAlert({
+                open: true,
+                message: `Erro ao criar usuário! HTTP ERROR ${err.response.status} - ${err.response.data.message}`,
+                severity: "error"
+            });
+            return;
+        }
+    };
+
+    const handleClose = (event?: SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setAlert({ ...alert, open: false });
+      };
 
     return (
         <div style={styles.wrapper}>
@@ -23,7 +71,6 @@ export const Login = () => {
                 <img src={Logo} style={styles.logo} alt="TaskApp" />
                 <div style={styles.buttonWrapper}>
                     <TextField
-                        id="standard-basic"
                         type="email"
                         color="secondary"
                         fullWidth
@@ -34,7 +81,6 @@ export const Login = () => {
                         onChange={email => setEmail(email.target.value)}
                     />
                     <TextField
-                        id="standard-basic"
                         type="password"
                         color="secondary"
                         fullWidth
@@ -45,9 +91,14 @@ export const Login = () => {
                         onChange={password => setPassword(password.target.value)}
                     />
                 </div>
-                    <Button onClick={()=> console.log(email)} variant="contained" size="large" style={styles.button}>
+                    <Button onClick={handleSubmit} variant="contained" size="large" style={styles.button}>
                         Entrar
                     </Button>
+                    <Snackbar  open={alert.open} autoHideDuration={6000} onClose={handleClose}>
+                        <Alert onClose={handleClose} variant="filled" severity={alert.severity} sx={{ width: '100%' }}>
+                            {alert.message}
+                        </Alert>
+                    </Snackbar>
             </div>
         </div>
     )

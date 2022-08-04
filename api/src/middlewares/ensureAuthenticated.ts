@@ -23,10 +23,7 @@ export async function ensureAuthenticated(
     const [, token] = req.headers.authorization.split(" ");
 
     try {
-        const { sub: user_id } = verify(
-            token,
-            auth.expires_in_token
-        ) as IPayload;
+        const { sub: user_id } = verify(token, auth.secret_token) as IPayload;
 
         const userRepository = new FirestoreUserRepository();
         const user = userRepository.findById(user_id);
